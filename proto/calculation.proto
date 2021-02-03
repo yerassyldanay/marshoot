@@ -1,0 +1,19 @@
+syntax = "proto3";
+
+package pb;
+option go_package = "pb";
+
+message CalculationRequestBody {
+    string origin = 1;
+    repeated string cities = 2;
+}
+
+message CalculationResponseBody {
+    repeated string cities = 1;
+    int32 total_distance = 2;
+    string error = 3;
+}
+
+service CalculationService {
+    rpc CalculateOptimalPath(CalculationRequestBody) returns (CalculationResponseBody) {};
+}

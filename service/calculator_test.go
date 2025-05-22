@@ -26,13 +26,9 @@ func TestCalculatorCustom(t *testing.T) {
 		},
 	}
 	out, err := testCalculationServer.CalculateOptimalPath(context.Background(), &in)
-	//require.NoError(t, err)
-	require.NotZero(t, len(out.Cities))
-	require.NotZero(t, out.TotalDistance)
-	fmt.Println(err)
-
-	fmt.Println(out)
-	//fmt.Printf("%#v \n", out.Cities)
-	//fmt.Printf("%#v \n", out.TotalDistance)
+	require.NoError(t, err)
+	require.NotNil(t, out) // Important check before accessing out.Cities or out.TotalDistance
+	require.Equal(t, 7, len(out.Cities))
+	require.True(t, out.TotalDistance > 0, "TotalDistance should be positive") // More descriptive than NotZero
 }
 

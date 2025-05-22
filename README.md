@@ -62,13 +62,13 @@ newServer := NewCalculationServer(&customCalculator)
 │   └── calculation.proto
 ├── README.md
 ├── service
-│   ├── abc_test.go
+│   ├── main_test.go
 │   ├── calculator_custom.go
 │   ├── calculator.go
 │   ├── calculator_test.go
 │   └── service_calculation.go
 └── utils
-    ├── functions.go
+    ├── load.go
     ├── parser.go
     └── randomer
         ├── payload.go

@@ -45,5 +45,5 @@ func (cs *CalculationServer) CalculateOptimalPath(ctx context.Context, in *pb.Ca
 
 	optimalPath, err := cs.Calculator.GetOptimalPath(cityAt, cities)
 	fmt.Println("Received: ", in.Origin, in.Cities)
-	return &optimalPath, err
+	return optimalPath, err
 }

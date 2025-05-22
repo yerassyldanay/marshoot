@@ -28,23 +28,19 @@ func NewCalculatorCustom(distanceMap map[string]map[string]int32) CalculatorCust
 /*
 	GetOptimalPath:
  */
-func (cc *CalculatorCustom) GetOptimalPath(origin string, citiesToVisit []string) (pb.CalculationResponseBody, error) {
+func (cc *CalculatorCustom) GetOptimalPath(origin string, citiesToVisit []string) (*pb.CalculationResponseBody, error) {
 	if len(citiesToVisit) == 0 {
-		return pb.CalculationResponseBody{
-			Error:         "destination is not specified",
-		}, errors.New("destination is not specified")
+		return nil, errors.New("destination is not specified")
 	}
 
 	for _, city := range citiesToVisit {
 		_, exists := cc.DistanceMap[city]
 		if !exists {
-			return pb.CalculationResponseBody{
-				Error: "there is no such city as " + city,
-			}, errors.New("there is no such city as " + city)
+			return nil, fmt.Errorf("there is no such city as %s", city)
 		}
 	}
 
-	var newRoute = calculatorCustomCase{
+	var newRoute = routeCalculationState{
 		DistanceMap: &cc.DistanceMap,
 	}
 	newRoute.SetDefaultValues()
@@ -54,35 +50,34 @@ func (cc *CalculatorCustom) GetOptimalPath(origin string, citiesToVisit []string
 
 	//fmt.Println("newRoute.Cities:", newRoute.Cities)
 
-	return pb.CalculationResponseBody{
+	return &pb.CalculationResponseBody{
 		Cities: newRoute.Cities,
 		TotalDistance: newRoute.TotalDistance,
 	}, nil
 }
 
 /*
-	calculatorCustomCase:
+	routeCalculationState:
 	custom calculator is established once when the server starts
-	then all requests are handled by this calculatorCustomCase struct
+	then all requests are handled by this routeCalculationState struct
  */
-type calculatorCustomCase struct {
+type routeCalculationState struct {
 	DistanceMap *map[string]map[string]int32
 	TotalDistance int32
 	Cities []string
 	Seen map[string]bool
 }
 
-func (newRoute *calculatorCustomCase) SetDefaultValues() {
-	newRoute.TotalDistance = int32(math.Pow(2, 20))
+func (newRoute *routeCalculationState) SetDefaultValues() {
+	newRoute.TotalDistance = math.MaxInt32
 	newRoute.Seen = map[string]bool{}
 }
 
-func (newRoute *calculatorCustomCase) FindOptimalPath(cityAt string, cityOrder []string, citiesToVisit []string, distance int32, numVisitedCities int) {
+func (newRoute *routeCalculationState) FindOptimalPath(cityAt string, cityOrder []string, citiesToVisit []string, distance int32, numVisitedCities int) {
 	if numVisitedCities == len(citiesToVisit) {
 		if newRoute.TotalDistance > distance {
 			newRoute.TotalDistance = distance
 			newRoute.Cities = cityOrder
-			fmt.Println(cityOrder, distance)
 		}
 
 		return
